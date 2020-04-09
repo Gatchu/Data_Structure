@@ -9,6 +9,10 @@ struct student{
 // 구조체 student를 생성합니다. 이 때, 구조체가 총 차지하는 용량은 13+4+2 = 19bytes입니다.
 
 int main(){
+    
+    printf("[-----Software, Student ID : 2017038040, Name : Han Gyu Jun-----]\n");
+    // 성명과 학번이 출력되도록 소스를 수정했습니다. 한글은 컴파일시 깨져서 영문으로 작성했습니다.
+    
     struct student pst; // typedef선언이 아니기 때문에 struct를 넣어서 선언해줍니다.
 
     printf("size of student = %ld\n", sizeof(struct student));
