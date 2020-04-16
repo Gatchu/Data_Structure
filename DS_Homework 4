@@ -163,8 +163,10 @@ int main(){
     if(matrix_axt == NULL) ERRCOUNT++;
     // axt의 크기는 a의 행수xt의 열수인데, a와 t가 전치행렬이므로 a의 행수(=t의 열수)=n일 때 n x n 행렬이기 때문에 row x row로 설정했습니다.
 
+    printf("---------- Matrix SUM(Memory Allocation) ----------\n");
     matrix_sum = create_matrix(rows, cols);
     if(matrix_sum == NULL) ERRCOUNT++;
+    printf("---------- Matrix SUB(Memory Allocation) ----------\n");
     matrix_sub = create_matrix(rows, cols);
     if(matrix_sub == NULL) ERRCOUNT++;
 
