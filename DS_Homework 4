@@ -1,0 +1,209 @@
+#include <stdio.h>
+#include <Windows.h>
+#define MALLOC(p, s)\
+if(!((p) = malloc(s))){\
+        fprintf(stderr, "Insufficient memory");\
+        exit(EXIT_FAILURE);\
+    }
+
+// MALLOC define선언을 통해 행렬을 동적할당해줍니다.
+
+void print_matrix(int ** matrix, int row, int col){
+    for(int i = 0; i < row; i++){
+        printf("\n");
+        for(int j = 0;j < col; j++)
+            printf("%d\t", matrix[i][j]);
+    }
+    printf("\n");
+}
+
+// 행렬, 행성분과 열성분을 전달받아 반복문을 돌면서, 행과 열을 구분해 출력해주는 함수입니다.
+
+int fill_data(int **matrix, int row, int col){
+    for(int i = 0; i < row; i++){
+        for(int j=0; j < col; j++){
+            matrix[i][j] = rand()%20;
+        }
+    }
+    if(matrix == NULL) return -1;
+    printf("---------- Fill data ----------\n");
+    print_matrix(matrix, row, col);
+}
+
+// 무작위로 숫자가 생성되는 rand 함수에 20을 나누어 남는 나머지로, 0~19의 범위 정수를 모든 행렬의 항이 갖게 설정하는 함수입니다.
+// 이때, 행렬이 NULL성분이라면(초기화가 잘못되었다면) -1을 반환해 에러카운트를 증가시킵니다.
+// 이후, 모든 항이 채워진 행렬을 print_matrix함수를 통해 출력합니다.
+
+int** create_matrix(int row, int col){
+    int **matrix, i;
+    if(row <= 0 || col <= 0){
+        printf("check the sizes of row and col!\n");
+        return NULL;
+    }
+
+    MALLOC(matrix, row*sizeof(*matrix));
+    for(i = 0; i < row; i++) MALLOC(matrix[i], col*sizeof(**matrix));
+    if(matrix == NULL) return NULL;
+
+    fill_data(matrix, row, col);
+    return matrix;
+}
+
+// 행렬을 만드는 함수입니다. 매크로 설정한 MALLOC을 이용해 1차원 배열에 행 갯수만큼의 포인터 크기만큼의 공간을, 2차원 배열에 행*열 갯수만큼 공간을 할당해줍니다.
+// 전처리에서 행이나 열 둘 중 하나가 0보다 작거나 같다면 에러 메세지를 출력하도록, 또는 후처리에서 행렬이 NULL값을 띄면(잘못 들어가면) 에러를 출력한 뒤 프로그램을 종료하도록 했습니다.
+// 이후 할당된 공간에 fill_data함수를 통해 항들을 랜덤으로 초기화시키고, 행렬을 그대로 return합니다.
+
+int addition_matrix(int **matrix_a, int **matrix_b, int **matrix_sum, int row, int col){
+    for(int i = 0; i < row; i++)
+        for(int j = 0; j < col; j++)
+            matrix_sum[i][j] = matrix_a[i][j] + matrix_b[i][j];
+
+    if(matrix_sum == NULL) return -1;
+    
+    printf("---------- Addition matrix A, B ----------\n");
+    print_matrix(matrix_sum, row, col);
+}
+
+// 더할 두 행렬과 결과가 나올 한 행렬, 행과 열을 입력받아 더해주는 행렬입니다. 같은 행 같은 열 성분끼리 더해주도록 되어 있습니다.
+// 더한 값을 합계 행렬에 저장합니다. 더해진 행렬에 NULL값이 저장되는 경우 에러 카운터를 증가시키기 위해 -1을 리턴합니다.
+// 이때, 문제가 없다면 print_matrix함수를 이용해 결과가 모두 더해진 행렬을 출력합니다.
+
+int subtraction_matrix(int **matrix_a, int **matrix_b, int **matrix_sub, int row, int col){
+    for(int i = 0; i < row; i++)
+        for(int j = 0; j < col; j++)
+            matrix_sub[i][j] = matrix_a[i][j] - matrix_b[i][j];
+
+    if(matrix_sub == NULL) return -1;
+
+    printf("---------- Subtraction matrix A, B ----------\n");
+    print_matrix(matrix_sub, row, col);
+}
+
+// 위의 더하기와 마찬가지로, 세 행렬과 행 열을 입력받아 같은 행 같은 열 성분끼리 빼주도록 되어 있습니다.
+
+int transpose_matrix(int **matrix, int **matrix_t, int row, int col){
+    for(int i = 0; i < row; i++){
+        for(int j = 0; j < col; j++)
+            matrix_t[j][i] = matrix[i][j];
+    }
+
+    if(matrix_t == NULL) return -1;
+
+    printf("---------- Tranpose matrix A ----------\n");
+    print_matrix(matrix_t, col, row);
+}
+
+// 이중반복문의 matrix_t의 행 열 위치와 matrix의 행 열 위치가 거꾸로 들어가, 전치행렬 matrix_t가 만들어지도록 되어 있습니다.
+// 이때, 행렬에 NULL값이 저장되면 에러카운터를 증가시킵니다. 또, 이상이 없다면 print_matrix함수로 출력합니다.
+
+int multiply_matrix(int **matrix_a, int **matrix_t, int **matrix_axt, int row, int col){
+    int Temp_Sum = 0;
+   
+    for(int i = 0; i < row; i++){
+        for(int j = 0; j < row; j++){
+            for(int a_j = 0; a_j < col; a_j++){
+                Temp_Sum = Temp_Sum + matrix_a[i][a_j] * matrix_t[a_j][j];
+            }
+            matrix_axt[i][j] = Temp_Sum;
+            Temp_Sum = 0;
+        }
+    }
+
+    if(matrix_axt == NULL) return -1;
+
+    printf("---------- Multiply matrix A, T ----------\n");
+    print_matrix(matrix_axt, row, row);
+}
+
+// 행렬 A와 그 전치행렬 간의 곱을 하도록 되어 있습니다. 임시값에 특정 행과 열의 연산이 이뤄진 뒤 결과행렬에 넣은 다음 초기화하여 다음 항을 구하는 식으로 되어 있습니다.
+// 이때도 마찬가지로, 행렬에 NULL값이 들어가는 경우 에러카운터를 증가시킵니다. 에러가 없다면 print_matrix함수로 출력합니다.
+
+int free_matrix(int **matrix, int row, int col){
+    if(matrix == NULL) return -1;
+    for(int i = 0; i < row; i++){
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+// 동적할당된 메모리를 재사용 가능하게 하는 함수입니다.
+// 먼저 가장 안쪽의 반복문을 이용해 주소가 저장된 2차 배열을 먼저 동적할당을 해제한 다음, 1차 배열 동적할당을 해제합니다.
+
+int main(){
+    int **matrix_a, **matrix_b, **matrix_sum, **matrix_sub, **matrix_t, **matrix_axt;
+    int rows, cols;
+    int ckerr;
+    int ERRCOUNT = 0;
+
+    // ckerr은 에러 발생시 함수에서 반환값 -1을 받아오는 변수이고, ERRCOUNT는 에러 발생시 증가하는 변수입니다.
+    // rows는 행 갯수를, cols는 열 갯수를 받아오는 변수입니다.
+    // 위에 선언된 행렬은, 각각 행렬A, 행렬B, 행렬A+B, 행렬A-B, A의 전치행렬, A와 A의 전치행렬의 곱입니다.
+
+    printf("[-----Software, Student ID : 2017038040, Name : Han Gyu Jun-----]\n");
+    // 성명과 학번이 출력되도록 소스를 수정했습니다. 한글은 컴파일시 깨져서 영문으로 작성했습니다.
+
+    printf("Rows : ");
+    scanf("%d", &rows);
+    printf("cols : ");
+    scanf("%d", &cols);
+
+    // 사용자로부터 행과 열의 갯수를 입력받습니다.
+
+    printf("---------- Matrix A ----------\n");
+    matrix_a = create_matrix(rows, cols);
+    if(matrix_a == NULL) ERRCOUNT++;
+    printf("---------- Matrix B ----------\n");
+    matrix_b = create_matrix(rows, cols);
+    if(matrix_b == NULL) ERRCOUNT++;
+    printf("---------- Matrix T(Memory Allocation) ----------\n");
+    matrix_t = create_matrix(cols, rows);
+    if(matrix_t == NULL) ERRCOUNT++;
+    printf("---------- Matrix AXT(Memory Allocation) ----------\n");
+    matrix_axt = create_matrix(rows, rows);
+    if(matrix_axt == NULL) ERRCOUNT++;
+    // axt의 크기는 a의 행수xt의 열수인데, a와 t가 전치행렬이므로 a의 행수(=t의 열수)=n일 때 n x n 행렬이기 때문에 row x row로 설정했습니다.
+
+    printf("---------- Matrix SUM(Memory Allocation) ----------\n");
+    matrix_sum = create_matrix(rows, cols);
+    if(matrix_sum == NULL) ERRCOUNT++;
+    printf("---------- Matrix SUB(Memory Allocation) ----------\n");
+    matrix_sub = create_matrix(rows, cols);
+    if(matrix_sub == NULL) ERRCOUNT++;
+
+    // A, B, T, AXT, SUM, SUB 행렬에 모두 공간을 할당합니다.
+    // 이때, T, AXT, SUM, SUB에 할당된 초기 랜덤값은 모두 의미가 없는 값이며, 밑의 함수들을 통해 알맞은 값들이 채워집니다.
+
+    
+    ckerr = addition_matrix(matrix_a, matrix_b, matrix_sum, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = subtraction_matrix(matrix_a, matrix_b, matrix_sub, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = transpose_matrix(matrix_a, matrix_t, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = multiply_matrix(matrix_a, matrix_t, matrix_axt, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+
+    // 행렬 SUM, SUB, T, AXT를 구하는 함수들입니다. 오류가 있다면 ckerr에 -1을 반환하고, ckerr이 -1이 되면 ERRCOUNT가 증가합니다.
+
+    ckerr = free_matrix(matrix_a, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = free_matrix(matrix_b, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = free_matrix(matrix_t, cols, rows);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = free_matrix(matrix_axt, rows, rows);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = free_matrix(matrix_sum, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+    ckerr = free_matrix(matrix_sub, rows, cols);
+    if(ckerr == -1) ERRCOUNT++;
+
+    // 모든 행렬에 할당된 주소들을 재사용 가능하도록 풀어주는 함수입니다. A, B, T, AXT, SUM, SUB 총 6개의 행렬을 FREE선언합니다.
+    // 항목마다 ckerr이 -1인지 확인합니다.
+
+    if(ERRCOUNT > 0) return -1;
+
+    // 최종적으로 에러가 발생했다면 ERRCOUNT에 의해 리턴값 -1(오류 발생을 알림)을 발생시키는 if함수입니다.
+    // 위에서 ckerr이 -1이라면 ERRCOUNT를 증가시키고, 에러가 한 번이라도 증가했다면 main함수에서 -1을 리턴해 제대로 프로그램이 종료되지 않았다고 전달합니다.
+    else return 1;
+}
