@@ -1,2 +1,5 @@
 import myFunc.py
-myFunc.func1()
+
+
+
+print("Hello world")
