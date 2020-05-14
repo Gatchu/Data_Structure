@@ -45,6 +45,8 @@ int main()
 	listNode* headnode=NULL;
 
 	do{
+		printf("[-----Software, Student ID : 2017038040, Name : Han Gyu Jun-----]\n");
+        // 성명과 학번이 출력되도록 소스를 수정했습니다. 한글은 컴파일시 깨져서 영문으로 작성했습니다.
 		printf("----------------------------------------------------------------\n");
 		printf("                  Doubly Circular Linked List                   \n");
 		printf("----------------------------------------------------------------\n");
